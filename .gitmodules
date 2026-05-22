@@ -1,0 +1,6 @@
+[submodule "apex_app"]
+	path = apex_app
+	url = https://github.com/QuedoUVM/apex
+[submodule "athena"]
+	path = athena
+	url = https://github.com/QuedoUVM/athena
