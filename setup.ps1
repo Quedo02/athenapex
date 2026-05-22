@@ -58,9 +58,9 @@ $volumeName  = "${projectName}_apex_node_modules"
 docker volume inspect $volumeName 2>$null | Out-Null
 if ($LASTEXITCODE -eq 0) {
     Write-Host "Deteniendo contenedores para liberar el volumen..."
-    docker compose down 2>$null | Out-Null
+    try { docker compose down *>$null } catch {}
     Write-Host "Eliminando volumen obsoleto de node_modules ($volumeName)..."
-    docker volume rm $volumeName 2>$null | Out-Null
+    try { docker volume rm $volumeName *>$null } catch {}
 }
 
 Write-Host ""
