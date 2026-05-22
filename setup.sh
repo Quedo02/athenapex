@@ -52,9 +52,13 @@ sed -i.bak "s|^EXPO_PUBLIC_API_URL=.*|EXPO_PUBLIC_API_URL=http://$HOST_IP:8000|"
 echo "✓ apex_app/.env actualizado (EXPO_PUBLIC_API_URL=http://$HOST_IP:8000)"
 
 # ── 5. Limpiar volumen de node_modules si existe (evita versiones obsoletas) ──
-if docker volume inspect school_apex_node_modules &>/dev/null; then
-  echo "Eliminando volumen obsoleto de node_modules..."
-  docker volume rm school_apex_node_modules 2>/dev/null || true
+PROJECT_NAME=$(basename "$PWD" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9')
+VOLUME_NAME="${PROJECT_NAME}_apex_node_modules"
+if docker volume inspect "$VOLUME_NAME" &>/dev/null; then
+  echo "Deteniendo contenedores para liberar el volumen..."
+  docker compose down &>/dev/null || true
+  echo "Eliminando volumen obsoleto de node_modules ($VOLUME_NAME)..."
+  docker volume rm "$VOLUME_NAME" 2>/dev/null || true
 fi
 
 echo ""

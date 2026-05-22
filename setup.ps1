@@ -51,10 +51,16 @@ if (-not (Test-Path "apex_app\.env")) {
 Write-Host "OK apex_app\.env actualizado (EXPO_PUBLIC_API_URL=http://${HOST_IP}:8000)" -ForegroundColor Green
 
 # 5. Limpiar volumen obsoleto de node_modules
-$volumeExists = docker volume inspect school_apex_node_modules 2>$null
+# El nombre del volumen depende del nombre de la carpeta del proyecto
+$projectName = (Get-Item .).Name.ToLower() -replace '[^a-z0-9]', ''
+$volumeName  = "${projectName}_apex_node_modules"
+
+docker volume inspect $volumeName 2>$null | Out-Null
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "Eliminando volumen obsoleto de node_modules..."
-    docker volume rm school_apex_node_modules 2>$null
+    Write-Host "Deteniendo contenedores para liberar el volumen..."
+    docker compose down 2>$null | Out-Null
+    Write-Host "Eliminando volumen obsoleto de node_modules ($volumeName)..."
+    docker volume rm $volumeName 2>$null | Out-Null
 }
 
 Write-Host ""
